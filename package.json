@@ -1,0 +1,19 @@
+{
+  "name": "sentinel-dashboard-backend",
+  "version": "1.0.0",
+  "description": "OAuth2 + settings API for the Sentinel dashboard",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.1",
+    "express-session": "^1.18.1",
+    "pg": "^8.13.1",
+    "node-fetch": "^2.7.0",
+    "dotenv": "^16.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Sentinel</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<svg style="display:none">
+  <symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="14" cy="6" r="2"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="8" cy="12" r="2"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="16" cy="18" r="2"/></symbol>
+  <symbol id="i-bot" viewBox="0 0 24 24"><rect x="5" y="9" width="14" height="10" rx="2"/><circle cx="9" cy="14" r="1.2"/><circle cx="15" cy="14" r="1.2"/><line x1="12" y1="9" x2="12" y2="5"/><circle cx="12" cy="4" r="1"/></symbol>
+  <symbol id="i-alert-triangle" viewBox="0 0 24 24"><path d="M12 3l10 18H2L12 3z"/><line x1="12" y1="9" x2="12" y2="14"/><circle cx="12" cy="17" r="1"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5V4z"/><path d="M8 4v5h7V4"/><path d="M8 14h8v6H8z"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><circle cx="12" cy="8" r="0.8"/></symbol>
+</svg>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark"><svg class="icon"><use href="#i-shield-check"/></svg></div>
+    Sentinel
+  </div>
+  <nav>
+    <a class="navlink" href="index.html">Home</a>
+    <span id="userArea"></span>
+  </nav>
+</header>
+
+<main class="dash-main">
+
+  <div id="loggedOutView" class="center-prompt">
+    <p>Log in with Discord to manage your server's settings.</p>
+    <a href="/auth/login" class="btn btn-primary">Log in with Discord</a>
+  </div>
+
+  <div id="loggedInView" class="hidden">
+
+    <div class="dash-head">
+      <h1>Server settings</h1>
+      <p>Changes apply immediately. No restart needed.</p>
+    </div>
+
+    <div class="guild-select-wrap">
+      <select id="guildPicker">
+        <option value="">Loading servers…</option>
+      </select>
+    </div>
+
+    <div id="noGuildsMsg" class="hidden">
+      <p style="color:var(--text-dim); font-size:13px;">No manageable servers found. You need "Manage Server" permission on a server Sentinel has joined.</p>
+    </div>
+
+    <div id="settingsArea" class="hidden">
+      <div class="dash-grid">
+
+        <div>
+          <div class="card">
+            <div class="card-head c-purple"><svg class="icon"><use href="#i-sliders"/></svg>General</div>
+            <div class="setting-row">
+              <label>Command prefix<span class="hint">Used for any non-slash fallback commands</span></label>
+              <input type="text" id="s-prefix" class="field field-sm" maxlength="5">
+            </div>
+            <div class="setting-row">
+              <label>Mod-log channel</label>
+              <select id="s-mod_log_channel_id" class="field"></select>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head c-teal"><svg class="icon"><use href="#i-bot"/></svg>Auto-moderation</div>
+            <div class="setting-row"><label>Spam filter</label><label class="tgl"><input type="checkbox" id="s-spam_filter_enabled"><span></span></label></div>
+            <div class="setting-row"><label>Messages before trigger<span class="hint">Within the time window below</span></label><input type="number" id="s-spam_msg_limit" class="field field-sm" min="2" max="20"></div>
+            <div class="setting-row"><label>Time window (ms)</label><input type="number" id="s-spam_window_ms" class="field field-sm" min="1000" max="60000" step="500"></div>
+            <div class="setting-row"><label>Link filter</label><label class="tgl"><input type="checkbox" id="s-link_filter_enabled"><span></span></label></div>
+            <div class="setting-row"><label>Invite blocking</label><label class="tgl"><input type="checkbox" id="s-invite_block_enabled"><span></span></label></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head c-amber"><svg class="icon"><use href="#i-alert-triangle"/></svg>Warnings &amp; mutes</div>
+            <div class="setting-row">
+              <label>Mute role</label>
+              <select id="s-mute_role_id" class="field"></select>
+            </div>
+            <div class="setting-row"><label>Warns before auto-mute</label><input type="number" id="s-warn_threshold" class="field field-sm" min="1" max="20"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head c-purple"><svg class="icon"><use href="#i-lock"/></svg>Server protection suite</div>
+            <div class="setting-row"><label>Mass-mention blocking<span class="hint">anti_mention</span></label><label class="tgl"><input type="checkbox" id="s-anti_mention_enabled"><span></span></label></div>
+            <div class="setting-row"><label>Mention limit</label><input type="number" id="s-anti_mention_limit" class="field field-sm" min="2" max="30"></div>
+            <div class="setting-row"><label>Vanity URL protection (detect-only)<span class="hint">anti_vanity</span></label><label class="tgl"><input type="checkbox" id="s-anti_vanity_enabled"><span></span></label></div>
+            <div class="setting-row"><label>Server rename protection<span class="hint">anti_server_rename</span></label><label class="tgl"><input type="checkbox" id="s-anti_server_rename_enabled"><span></span></label></div>
+            <div class="setting-row"><label>Server icon protection<span class="hint">anti_server_icon</span></label><label class="tgl"><input type="checkbox" id="s-anti_server_icon_enabled"><span></span></label></div>
+            <div class="setting-row"><label>Role rename protection<span class="hint">anti_role_rename</span></label><label class="tgl"><input type="checkbox" id="s-anti_role_rename_enabled"><span></span></label></div>
+            <div class="setting-row"><label>Channel rename protection<span class="hint">anti_channel_rename</span></label><label class="tgl"><input type="checkbox" id="s-anti_channel_rename_enabled"><span></span></label></div>
+            <div class="setting-row"><label>Emoji delete alerts (detect-only)<span class="hint">anti_emoji_delete</span></label><label class="tgl"><input type="checkbox" id="s-anti_emoji_delete_enabled"><span></span></label></div>
+            <div class="setting-row"><label>Emoji rename protection<span class="hint">anti_emoji_rename</span></label><label class="tgl"><input type="checkbox" id="s-anti_emoji_rename_enabled"><span></span></label></div>
+            <div class="setting-row"><label>Invite delete alerts (detect-only)<span class="hint">anti_invite_delete</span></label><label class="tgl"><input type="checkbox" id="s-anti_invite_delete_enabled"><span></span></label></div>
+            <div class="setting-row"><label>Ghost-ping detection<span class="hint">anti_ghost_ping</span></label><label class="tgl"><input type="checkbox" id="s-anti_ghost_ping_enabled"><span></span></label></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head c-amber"><svg class="icon"><use href="#i-alert-triangle"/></svg>Anti-raid &amp; verification</div>
+            <div class="setting-row"><label>Anti-raid</label><label class="tgl"><input type="checkbox" id="s-anti_raid_enabled"><span></span></label></div>
+            <div class="setting-row"><label>Join limit before flagging</label><input type="number" id="s-anti_raid_join_limit" class="field field-sm" min="3" max="100"></div>
+            <div class="setting-row"><label>Time window (ms)</label><input type="number" id="s-anti_raid_join_window_ms" class="field field-sm" min="1000" max="120000" step="500"></div>
+            <div class="setting-row"><label>Verification on join</label><label class="tgl"><input type="checkbox" id="s-verification_enabled"><span></span></label></div>
+            <div class="setting-row" style="flex-direction:column; align-items:stretch;">
+              <label style="margin-bottom:6px;">Verification message</label>
+              <textarea id="s-verification_message" class="field" rows="3" style="width:100%; resize:vertical;"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" id="serverInfoCard">
+            <div class="card-head c-dim"><svg class="icon"><use href="#i-info"/></svg>This server</div>
+            <div id="serverInfoBody" style="font-size:13px; color:var(--text-dim);">—</div>
+          </div>
+          <div class="card">
+            <div class="card-head c-dim"><svg class="icon"><use href="#i-info"/></svg>Notes</div>
+            <p style="font-size:12.5px; color:var(--text-dim); line-height:1.6;">
+              Settings marked "detect-only" log the change to your mod-log channel but can't auto-revert it —
+              see the README for why. For full action history, check Discord's own
+              Server Settings → Audit Log.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="save-bar">
+        <button id="saveBtn" class="btn btn-primary">
+          <svg class="icon"><use href="#i-save"/></svg>
+          Save changes
+        </button>
+        <span id="saveStatus" class="save-status"></span>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<script src="dashboard.js"></script>
+</body>
+</html>
